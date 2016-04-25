@@ -1,4 +1,5 @@
 # OEAsyncBlockOperation
+[![CocoaPods](https://img.shields.io/cocoapods/v/OEAsyncBlockOperation.svg?maxAge=2592000)]()
 [![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Twitter](https://img.shields.io/badge/Twitter-@orelm-blue.svg?style=flat)](http://twitter.com/OrElm)
 
