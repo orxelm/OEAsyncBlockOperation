@@ -9,6 +9,30 @@ Mostly common for autocomplete requests when you want to perform only one async 
 Swift 2+
 
 ## Installation
+### CocoaPods
+
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+
+```bash
+$ gem install cocoapods
+```
+
+To integrate OEAsyncBlockOperation into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+pod 'OEAsyncBlockOperation'
+```
+
+Then, run the following command:
+
+```bash
+$ pod install
+```
+
+### Manually
 Just drag AsyncBlockOperation.swift file to your xcode project
 
 ## Usage
