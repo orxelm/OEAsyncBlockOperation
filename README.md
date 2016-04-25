@@ -35,4 +35,4 @@ AsyncBlockOperation.cancelAllAsyncBlockOperationOnQueue(self.operationQueue, wit
 ```
 
 ## TO-DO
-- [ ] Support Cocoapods
+- [x] Support Cocoapods
