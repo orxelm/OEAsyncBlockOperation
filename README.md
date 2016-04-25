@@ -5,7 +5,7 @@ Mostly common for autocomplete requests when you want to perform only one async 
 Swift 2+
 
 ## Installation
-Just drag OEAsyncBlockOperation.swift file to your xcode project
+Just drag AsyncBlockOperation.swift file to your xcode project
 
 ## Usage
 ### Create Operation
@@ -14,7 +14,7 @@ self.operationQueue = NSOperationQueue()
 self.operationQueue.maxConcurrentOperationCount = 1
 ...
 
-let operation = OEAsyncBlockOperation.operationWithIdentifier(kBlockOperationIdentifer, queue: self.operationQueue)
+let operation = AsyncBlockOperation.operationWithIdentifier(kBlockOperationIdentifer, queue: self.operationQueue)
 weak var weakOperation = operation
 operation.operationBlock = {
   RequestsManager.defaultManager.performAsyncRequestWithCompletionHandler {
@@ -27,5 +27,8 @@ self.operationQueue.addOperation(operation)
 ```
 ### Cancel All Operations
 ```swift
-OEAsyncBlockOperation.cancelAllAsyncBlockOperationOnQueue(self.operationQueue, withIdentifier: kBlockOperationIdentifer)
+AsyncBlockOperation.cancelAllAsyncBlockOperationOnQueue(self.operationQueue, withIdentifier: kBlockOperationIdentifer)
 ```
+
+## TO-DO
+- [ ] Support Cocoapods
