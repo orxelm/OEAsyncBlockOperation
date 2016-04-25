@@ -10,12 +10,12 @@ import Foundation
 private let NSOperationIsExecutingKey = "isExecuting"
 private let NSOperationIsFinishedKey = "isFinished"
 
-typealias OperationBlock = Void -> Void
+public typealias OperationBlock = Void -> Void
 
-class AsyncBlockOperation: NSOperation {
+public class AsyncBlockOperation: NSOperation {
     
-    var operationBlock: OperationBlock? = nil
-    var identifier: String? = nil
+    public var operationBlock: OperationBlock? = nil
+    public var identifier: String? = nil
 
     private var isFinished = false {
         willSet {
@@ -35,7 +35,7 @@ class AsyncBlockOperation: NSOperation {
         }
     }
     
-    class func operationWithIdentifier(identifier: String, queue: NSOperationQueue) -> AsyncBlockOperation {
+    public class func operationWithIdentifier(identifier: String, queue: NSOperationQueue) -> AsyncBlockOperation {
         let operation = AsyncBlockOperation()
         operation.identifier = identifier
         
@@ -50,7 +50,7 @@ class AsyncBlockOperation: NSOperation {
         return operation
     }
     
-    class func cancelAllAsyncBlockOperationOnQueue(queue: NSOperationQueue, withIdentifier identifier: String) {
+    public class func cancelAllAsyncBlockOperationOnQueue(queue: NSOperationQueue, withIdentifier identifier: String) {
         if !identifier.isEmpty {
             for operation in queue.operations {
                 if let operation = operation as? AsyncBlockOperation where operation.identifier == identifier {
@@ -87,7 +87,7 @@ class AsyncBlockOperation: NSOperation {
         return self.isFinished
     }
     
-    func completeOperation() {
+    public func completeOperation() {
         self.isExecuting = false
         self.isFinished = true
     }
