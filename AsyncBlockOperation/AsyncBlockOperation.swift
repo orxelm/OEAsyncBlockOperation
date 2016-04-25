@@ -60,7 +60,7 @@ public class AsyncBlockOperation: NSOperation {
         }
     }
     
-    override func start() {
+    override public func start() {
         if self.cancelled {
             self.isFinished = true
         }
@@ -70,7 +70,7 @@ public class AsyncBlockOperation: NSOperation {
         }
     }
     
-    override func main() {
+    override public func main() {
         if let operationBlock = self.operationBlock {
             operationBlock()
         }
@@ -79,11 +79,11 @@ public class AsyncBlockOperation: NSOperation {
         }
     }
     
-    override var executing: Bool {
+    override public var executing: Bool {
         return self.isExecuting
     }
     
-    override var finished: Bool {
+    override public var finished: Bool {
         return self.isFinished
     }
     
