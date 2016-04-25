@@ -1,6 +1,7 @@
 # OEAsyncBlockOperation
 [![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Twitter](https://img.shields.io/badge/Twitter-@orelm-blue.svg?style=flat)](http://twitter.com/OrElm)
+
 A simple NSOperation subclass to perform asynchronous operations on NSOperationQueue. In which operation isn't finished until you invoke 'completeOperation()'.
 Mostly common for autocomplete requests when you want to perform only one async request at a time, wait for the async operation to end before exiting the queue.
 ## Requirements
