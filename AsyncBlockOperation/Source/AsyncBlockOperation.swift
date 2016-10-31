@@ -10,38 +10,38 @@ import Foundation
 private let NSOperationIsExecutingKey = "isExecuting"
 private let NSOperationIsFinishedKey = "isFinished"
 
-public typealias OperationBlock = Void -> Void
+public typealias OperationBlock = (Void) -> Void
 
-public class AsyncBlockOperation: NSOperation {
+public class AsyncBlockOperation: Operation {
     
     public var operationBlock: OperationBlock? = nil
     public var identifier: String? = nil
 
-    private var isFinished = false {
+    private var _isFinished = false {
         willSet {
-            self.willChangeValueForKey(NSOperationIsFinishedKey)
+            self.willChangeValue(forKey: NSOperationIsFinishedKey)
         }
         didSet {
-            self.didChangeValueForKey(NSOperationIsFinishedKey)
+            self.didChangeValue(forKey: NSOperationIsFinishedKey)
         }
     }
     
-    private var isExecuting = false {
+    private var _isExecuting = false {
         willSet {
-            self.willChangeValueForKey(NSOperationIsExecutingKey)
+            self.willChangeValue(forKey: NSOperationIsExecutingKey)
         }
         didSet {
-            self.didChangeValueForKey(NSOperationIsExecutingKey)
+            self.didChangeValue(forKey: NSOperationIsExecutingKey)
         }
     }
     
-    public class func operationWithIdentifier(identifier: String, queue: NSOperationQueue) -> AsyncBlockOperation {
+    public class func operation(withIdentifier identifier: String, queue: OperationQueue) -> AsyncBlockOperation {
         let operation = AsyncBlockOperation()
         operation.identifier = identifier
         
         if !identifier.isEmpty {
             for enqueuedOperation in queue.operations {
-                if let enqueuedOperation = enqueuedOperation as? AsyncBlockOperation where enqueuedOperation.identifier == identifier {
+                if let enqueuedOperation = enqueuedOperation as? AsyncBlockOperation, enqueuedOperation.identifier == identifier {
                     operation.addDependency(enqueuedOperation)
                 }
             }
@@ -50,10 +50,10 @@ public class AsyncBlockOperation: NSOperation {
         return operation
     }
     
-    public class func cancelAllAsyncBlockOperationOnQueue(queue: NSOperationQueue, withIdentifier identifier: String) {
+    public class func cancelAllAsyncBlockOperation(onQueue queue: OperationQueue, withIdentifier identifier: String) {
         if !identifier.isEmpty {
             for operation in queue.operations {
-                if let operation = operation as? AsyncBlockOperation where operation.identifier == identifier {
+                if let operation = operation as? AsyncBlockOperation, operation.identifier == identifier {
                     operation.cancel()
                 }
             }
@@ -61,11 +61,11 @@ public class AsyncBlockOperation: NSOperation {
     }
     
     override public func start() {
-        if self.cancelled {
-            self.isFinished = true
+        if self.isCancelled {
+            self._isFinished = true
         }
-        else if !self.finished && !self.isExecuting {
-            self.isExecuting = true
+        else if !self.isFinished && !self.isExecuting {
+            self._isExecuting = true
             self.main()
         }
     }
@@ -79,16 +79,16 @@ public class AsyncBlockOperation: NSOperation {
         }
     }
     
-    override public var executing: Bool {
-        return self.isExecuting
+    override public var isExecuting: Bool {
+        return self._isExecuting
     }
     
-    override public var finished: Bool {
-        return self.isFinished
+    override public var isFinished: Bool {
+        return self._isFinished
     }
     
     public func completeOperation() {
-        self.isExecuting = false
-        self.isFinished = true
+        self._isExecuting = false
+        self._isFinished = true
     }
 }

@@ -42,7 +42,7 @@ self.operationQueue = NSOperationQueue()
 self.operationQueue.maxConcurrentOperationCount = 1
 ...
 
-let operation = AsyncBlockOperation.operationWithIdentifier(kBlockOperationIdentifer, queue: self.operationQueue)
+let operation = AsyncBlockOperation.operation(withIdentifier: kBlockOperationIdentifer, queue: self.operationQueue)
 weak var weakOperation = operation
 operation.operationBlock = {
   RequestsManager.defaultManager.performAsyncRequestWithCompletionHandler {
@@ -55,8 +55,10 @@ self.operationQueue.addOperation(operation)
 ```
 ### Cancel All Operations
 ```swift
-AsyncBlockOperation.cancelAllAsyncBlockOperationOnQueue(self.operationQueue, withIdentifier: kBlockOperationIdentifer)
+AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue, withIdentifier: kBlockOperationIdentifer)
 ```
 
 ## TO-DO
 - [x] Support Cocoapods
+- [x] Support Swift3
+- [ ] Add tests
