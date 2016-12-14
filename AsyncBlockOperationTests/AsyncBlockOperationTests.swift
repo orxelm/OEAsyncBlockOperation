@@ -21,11 +21,13 @@ class AsyncBlockOperationTests: XCTestCase {
     
     override func tearDown() {
         super.tearDown()
+        
+        AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue)
     }
     
-    func testAsyncBlockOperation() {
-        
-        AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue, withIdentifier: kTestIdentifier)
+    /// Operations with the same identifier has dependency, they must execute by the order added to the operation queue
+    func testAsyncBlockOperationWithDependency() {
+        var operationOrderArray = [Int]()
         
         let operation = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
         
@@ -33,11 +35,12 @@ class AsyncBlockOperationTests: XCTestCase {
         operation.operationBlock = {
             
             // wait 3 sec
-            let loopUntil = Date.init(timeIntervalSinceNow: 3)
-            while (loopUntil.timeIntervalSinceNow > 0) {
+            let loopUntil = Date(timeIntervalSinceNow: 3)
+            while loopUntil.timeIntervalSinceNow > 0 {
                 RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: loopUntil)
             }
-            print("1")
+            
+            operationOrderArray.append(1)
             weakOperation?.completeOperation()
         }
         
@@ -47,10 +50,127 @@ class AsyncBlockOperationTests: XCTestCase {
         
         weak var weakOperation2 = operation2
         operation2.operationBlock = {
-            print("2")
+            operationOrderArray.append(2)
             weakOperation2?.completeOperation()
         }
         
         self.operationQueue.addOperation(operation2)
+        
+        // wait 5 sec
+        let loopUntil = Date(timeIntervalSinceNow: 5)
+        while loopUntil.timeIntervalSinceNow > 0 {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: loopUntil)
+        }
+        
+        XCTAssertEqual(operationOrderArray, [1, 2])
+    }
+    
+    /// Operations without the same identifier doesn't has dependency, they can execute simultaneously
+    func testAsyncBlockOperationWithoutDependency() {
+        var operationOrderArray = [Int]()
+        
+        let operation = AsyncBlockOperation.operation(withIdentifier: "some_identifier_1", queue: self.operationQueue)
+        
+        weak var weakOperation = operation
+        operation.operationBlock = {
+            
+            // wait 3 sec
+            let loopUntil = Date(timeIntervalSinceNow: 3)
+            while loopUntil.timeIntervalSinceNow > 0 {
+                RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: loopUntil)
+            }
+            
+            operationOrderArray.append(1)
+            weakOperation?.completeOperation()
+        }
+        
+        self.operationQueue.addOperation(operation)
+        
+        let operation2 = AsyncBlockOperation.operation(withIdentifier: "some_identifier_2", queue: self.operationQueue)
+        
+        weak var weakOperation2 = operation2
+        operation2.operationBlock = {
+            operationOrderArray.append(2)
+            weakOperation2?.completeOperation()
+        }
+        
+        self.operationQueue.addOperation(operation2)
+        
+        // wait 5 sec
+        let loopUntil = Date(timeIntervalSinceNow: 5)
+        while loopUntil.timeIntervalSinceNow > 0 {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: loopUntil)
+        }
+        
+        XCTAssertEqual(operationOrderArray, [2, 1])
+    }
+    
+    /// Operations that doesn't call Self.completeOperation() will never exit the queue
+    func testCompleteOperation() {
+        var didOperationComplete = false
+    
+        let operation = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        operation.operationBlock = {
+            // Doesn't call Self.Self.completeOperation() in purpose!
+        }
+        
+        self.operationQueue.addOperation(operation)
+        
+        let operation2 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        operation2.operationBlock = {
+            didOperationComplete = true
+        }
+        
+        self.operationQueue.addOperation(operation2)
+        
+        // wait 5 sec
+        let loopUntil = Date(timeIntervalSinceNow: 5)
+        while loopUntil.timeIntervalSinceNow > 0 {
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: loopUntil)
+        }
+        
+        XCTAssertFalse(didOperationComplete)
+    }
+    
+    /// Test the cancel all operation method
+    func testCancelAllOperations() {
+        let operation1 = AsyncBlockOperation.operation(withIdentifier: "1", queue: self.operationQueue)
+        operation1.operationBlock = {
+            
+        }
+        
+        let operation2 = AsyncBlockOperation.operation(withIdentifier: "2", queue: self.operationQueue)
+        let operation3 = AsyncBlockOperation.operation(withIdentifier: "3", queue: self.operationQueue)
+        
+        self.operationQueue.addOperations([operation1, operation2, operation3], waitUntilFinished: false)
+        AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue)
+        
+        XCTAssertTrue(self.operationQueue.operationCount == 0)
+    }
+    
+    /// Cancel all operations with identifier should cancel ONLY the relevant operations!
+    func testCancelAllOperationsWithIdentifier() {
+        let operation1 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        operation1.operationBlock = {
+            
+        }
+        
+        let operation2 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        let operation3 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        let operation4 = BlockOperation()
+        operation4.addExecutionBlock {
+            sleep(20)
+        }
+        
+        let operation5 = BlockOperation()
+        operation5.addExecutionBlock {
+            sleep(20)
+        }
+        
+        self.operationQueue.addOperations([operation1, operation2, operation3, operation4, operation5], waitUntilFinished: false)
+        
+        AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue, withIdentifier: kTestIdentifier)
+        
+        XCTAssertTrue(self.operationQueue.operationCount == 2)
     }
 }

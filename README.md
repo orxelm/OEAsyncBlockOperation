@@ -61,4 +61,4 @@ AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue, w
 ## TO-DO
 - [x] Support Cocoapods
 - [x] Support Swift3
-- [ ] Add tests
+- [x] Add tests

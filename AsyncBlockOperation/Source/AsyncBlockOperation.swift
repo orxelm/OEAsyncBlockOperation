@@ -55,7 +55,17 @@ public class AsyncBlockOperation: Operation {
             for operation in queue.operations {
                 if let operation = operation as? AsyncBlockOperation, operation.identifier == identifier {
                     operation.cancel()
+                    operation.completeOperation()
                 }
+            }
+        }
+    }
+    
+    public class func cancelAllAsyncBlockOperation(onQueue queue: OperationQueue) {
+        for operation in queue.operations {
+            if let operation = operation as? AsyncBlockOperation {
+                operation.cancel()
+                operation.completeOperation()
             }
         }
     }
