@@ -56,6 +56,7 @@ self.operationQueue.addOperation(operation)
 ### Cancel All Operations
 ```swift
 AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue, withIdentifier: kBlockOperationIdentifer)
+AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue)
 ```
 
 ## TO-DO
