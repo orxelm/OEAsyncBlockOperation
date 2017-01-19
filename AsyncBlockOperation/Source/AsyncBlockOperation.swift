@@ -15,6 +15,7 @@ public typealias OperationBlock = (Void) -> Void
 public class AsyncBlockOperation: Operation {
     
     public var operationBlock: OperationBlock? = nil
+    public var cancelBlock: OperationBlock? = nil
     public var identifier: String? = nil
 
     private var _isFinished = false {
@@ -33,6 +34,11 @@ public class AsyncBlockOperation: Operation {
         didSet {
             self.didChangeValue(forKey: NSOperationIsExecutingKey)
         }
+    }
+    
+    override public func cancel() {
+        super.cancel()
+        self.cancelBlock?()
     }
     
     public class func operation(withIdentifier identifier: String, queue: OperationQueue) -> AsyncBlockOperation {

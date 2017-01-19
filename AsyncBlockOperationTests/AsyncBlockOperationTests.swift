@@ -132,12 +132,47 @@ class AsyncBlockOperationTests: XCTestCase {
         XCTAssertFalse(didOperationComplete)
     }
     
+    /// Test cancel block fired on operation cancel
+    func testCancelBlockOperation() {
+        var isCancelBlockFired = false
+        let operation = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        operation.operationBlock = {
+            print("running!")
+        }
+        
+        operation.cancelBlock = {
+            isCancelBlockFired = true
+        }
+        
+        self.operationQueue.addOperation(operation)
+        AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue)
+        
+        XCTAssertTrue(isCancelBlockFired)
+    }
+    
+    /// Test mass cancel block fired on operation cancel
+    func testMassCancelBlockOperation() {
+        var numOfCancelledOperations = 0
+        
+        let operation1 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
+        operation1.operationBlock = { print("running!") }
+        operation1.cancelBlock = { numOfCancelledOperations += 1 }
+        
+        let operation2 = AsyncBlockOperation.operation(withIdentifier: "2", queue: self.operationQueue)
+        operation2.cancelBlock = { numOfCancelledOperations += 1 }
+        let operation3 = AsyncBlockOperation.operation(withIdentifier: "3", queue: self.operationQueue)
+        operation3.cancelBlock = { numOfCancelledOperations += 1 }
+        
+        self.operationQueue.addOperations([operation1, operation2, operation3], waitUntilFinished: false)
+        AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue)
+        
+        XCTAssertTrue(numOfCancelledOperations == 3)
+    }
+    
     /// Test the cancel all operation method
     func testCancelAllOperations() {
         let operation1 = AsyncBlockOperation.operation(withIdentifier: "1", queue: self.operationQueue)
-        operation1.operationBlock = {
-            
-        }
+        operation1.operationBlock = { }
         
         let operation2 = AsyncBlockOperation.operation(withIdentifier: "2", queue: self.operationQueue)
         let operation3 = AsyncBlockOperation.operation(withIdentifier: "3", queue: self.operationQueue)
@@ -151,9 +186,7 @@ class AsyncBlockOperationTests: XCTestCase {
     /// Cancel all operations with identifier should cancel ONLY the relevant operations!
     func testCancelAllOperationsWithIdentifier() {
         let operation1 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
-        operation1.operationBlock = {
-            
-        }
+        operation1.operationBlock = { }
         
         let operation2 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
         let operation3 = AsyncBlockOperation.operation(withIdentifier: kTestIdentifier, queue: self.operationQueue)
