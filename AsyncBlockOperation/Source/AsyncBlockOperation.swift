@@ -61,7 +61,7 @@ public class AsyncBlockOperation: Operation {
             for operation in queue.operations {
                 if let operation = operation as? AsyncBlockOperation, operation.identifier == identifier {
                     operation.cancel()
-                    operation.completeOperation()
+                    operation.complete()
                 }
             }
         }
@@ -71,7 +71,7 @@ public class AsyncBlockOperation: Operation {
         for operation in queue.operations {
             if let operation = operation as? AsyncBlockOperation {
                 operation.cancel()
-                operation.completeOperation()
+                operation.complete()
             }
         }
     }
@@ -91,7 +91,7 @@ public class AsyncBlockOperation: Operation {
             operationBlock()
         }
         else {
-            self.completeOperation()
+            self.complete()
         }
     }
     
@@ -103,7 +103,7 @@ public class AsyncBlockOperation: Operation {
         return self._isFinished
     }
     
-    public func completeOperation() {
+    public func complete() {
         self._isExecuting = false
         self._isFinished = true
     }

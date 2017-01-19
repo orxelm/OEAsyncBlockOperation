@@ -41,7 +41,7 @@ class AsyncBlockOperationTests: XCTestCase {
             }
             
             operationOrderArray.append(1)
-            weakOperation?.completeOperation()
+            weakOperation?.complete()
         }
         
         self.operationQueue.addOperation(operation)
@@ -51,7 +51,7 @@ class AsyncBlockOperationTests: XCTestCase {
         weak var weakOperation2 = operation2
         operation2.operationBlock = {
             operationOrderArray.append(2)
-            weakOperation2?.completeOperation()
+            weakOperation2?.complete()
         }
         
         self.operationQueue.addOperation(operation2)
@@ -81,7 +81,7 @@ class AsyncBlockOperationTests: XCTestCase {
             }
             
             operationOrderArray.append(1)
-            weakOperation?.completeOperation()
+            weakOperation?.complete()
         }
         
         self.operationQueue.addOperation(operation)
@@ -91,7 +91,7 @@ class AsyncBlockOperationTests: XCTestCase {
         weak var weakOperation2 = operation2
         operation2.operationBlock = {
             operationOrderArray.append(2)
-            weakOperation2?.completeOperation()
+            weakOperation2?.complete()
         }
         
         self.operationQueue.addOperation(operation2)

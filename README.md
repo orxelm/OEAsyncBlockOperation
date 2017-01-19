@@ -3,7 +3,7 @@
 [![Swift 3.0](https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
 [![Twitter](https://img.shields.io/badge/Twitter-@orelm-blue.svg?style=flat)](http://twitter.com/OrElm)
 
-A simple NSOperation subclass to perform asynchronous operations on NSOperationQueue. In which operation isn't finished until you invoke 'completeOperation()'.
+A simple NSOperation subclass to perform asynchronous operations on NSOperationQueue. In which operation isn't finished until you invoke `complete()`.
 Mostly common for autocomplete requests when you want to perform only one async request at a time, wait for the async operation to end before exiting the queue.
 ## Requirements
 Swift 3 (For Swift 2+ please use the swift_2_2 branch)
@@ -38,16 +38,20 @@ Just drag AsyncBlockOperation.swift file to your xcode project
 ## Usage
 ### Create Operation
 ```swift
-self.operationQueue = NSOperationQueue()
+self.operationQueue = OperationQueue()
 self.operationQueue.maxConcurrentOperationCount = 1
 ...
 
 let operation = AsyncBlockOperation.operation(withIdentifier: kBlockOperationIdentifer, queue: self.operationQueue)
 weak var weakOperation = operation
 operation.operationBlock = {
-  RequestsManager.defaultManager.performAsyncRequestWithCompletionHandler {
-    weakOperation?.completeOperation()
-  }
+  	RequestsManager.defaultManager.performAsyncRequestWithCompletionHandler {
+    	weakOperation?.complete()
+  	}
+}
+
+operation.cancelBlock = {
+	// your cancel code here
 }
 
 self.operationQueue.addOperation(operation)
@@ -58,8 +62,3 @@ self.operationQueue.addOperation(operation)
 AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue, withIdentifier: kBlockOperationIdentifer)
 AsyncBlockOperation.cancelAllAsyncBlockOperation(onQueue: self.operationQueue)
 ```
-
-## TO-DO
-- [x] Support Cocoapods
-- [x] Support Swift3
-- [x] Add tests
