@@ -10,7 +10,7 @@ import Foundation
 private let NSOperationIsExecutingKey = "isExecuting"
 private let NSOperationIsFinishedKey = "isFinished"
 
-public typealias OperationBlock = (Void) -> Void
+public typealias OperationBlock = () -> ()
 
 public class AsyncBlockOperation: Operation {
     
