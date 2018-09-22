@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name              = "OEAsyncBlockOperation"
-  s.version           = "1.0.5"
+  s.version           = "1.0.6"
   s.summary           = "A simple NSOperation subclass to perform asynchronous operations on NSOperationQueue"
   s.homepage          = "https://github.com/orxelm/OEAsyncBlockOperation"
   s.license           = { :type => "MIT", :file => "LICENSE" }
@@ -11,4 +11,5 @@ Pod::Spec.new do |s|
   s.source_files      = "AsyncBlockOperation/Source/AsyncBlockOperation.swift"
   s.requires_arc      = true
   s.framework         = "Foundation"
+  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '3.0' }
 end
